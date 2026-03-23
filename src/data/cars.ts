@@ -1,0 +1,140 @@
+import type { Car } from "@/types/car";
+import { slugify } from "@/lib/utils";
+
+import heroPorsche from "@/assets/images/cars/porsche.svg";
+import g63 from "@/assets/images/cars/g63.svg";
+import s580 from "@/assets/images/cars/s580.svg";
+import m4 from "@/assets/images/cars/m4.svg";
+import rs7 from "@/assets/images/cars/rs7.svg";
+import rover from "@/assets/images/cars/rover.svg";
+
+const now = new Date().toISOString();
+
+export const fallbackCars: Car[] = [
+  {
+    id: "1",
+    title: "Porsche 911 Carrera S",
+    make: "Porsche",
+    model: "911 Carrera S",
+    slug: slugify("Porsche 911 Carrera S"),
+    year: 2024,
+    price: 18500000,
+    offer_price: 18000000,
+    status: "available",
+    mileage: "4,500 km",
+    transmission: "PDK",
+    fuel_type: "Petrol",
+    body_type: "Coupe",
+    description: "Mint condition Porsche 911 Carrera S with PDK transmission.",
+    location: "Nairobi",
+    is_featured: true,
+    image_urls: [heroPorsche],
+    created_at: "2026-01-05T10:00:00.000Z",
+    updated_at: now
+  },
+  {
+    id: "2",
+    title: "Mercedes-Benz G 63 AMG",
+    make: "Mercedes-Benz",
+    model: "G 63 AMG",
+    slug: slugify("Mercedes-Benz G 63 AMG"),
+    year: 2023,
+    price: 24000000,
+    offer_price: 0,
+    status: "available",
+    mileage: "1,200 km",
+    transmission: "Automatic",
+    fuel_type: "Petrol",
+    body_type: "SUV",
+    description: "Barely used G63 AMG with premium interior finish.",
+    location: "Mombasa",
+    is_featured: true,
+    image_urls: [g63],
+    created_at: "2026-02-01T10:00:00.000Z",
+    updated_at: now
+  },
+  {
+    id: "3",
+    title: "Mercedes-Benz S 580",
+    make: "Mercedes-Benz",
+    model: "S 580",
+    slug: slugify("Mercedes-Benz S 580"),
+    year: 2024,
+    price: 22000000,
+    offer_price: 21500000,
+    status: "available",
+    mileage: "800 km",
+    transmission: "Automatic",
+    fuel_type: "Petrol",
+    body_type: "Sedan",
+    description: "Ultimate luxury sedan, low mileage, executive driven.",
+    location: "Nairobi",
+    is_featured: true,
+    image_urls: [s580],
+    created_at: "2026-02-12T10:00:00.000Z",
+    updated_at: now
+  },
+  {
+    id: "4",
+    title: "BMW M4 Competition",
+    make: "BMW",
+    model: "M4 Competition",
+    slug: slugify("BMW M4 Competition"),
+    year: 2023,
+    price: 16800000,
+    offer_price: 0,
+    status: "available",
+    mileage: "2,300 km",
+    transmission: "Automatic",
+    fuel_type: "Petrol",
+    body_type: "Coupe",
+    description: "Track ready M4 Competition.",
+    location: "Nairobi",
+    is_featured: false,
+    image_urls: [m4],
+    created_at: "2025-12-20T10:00:00.000Z",
+    updated_at: now
+  },
+  {
+    id: "5",
+    title: "Audi RS7 Sportback",
+    make: "Audi",
+    model: "RS7",
+    slug: slugify("Audi RS7 Sportback"),
+    year: 2022,
+    price: 20500000,
+    offer_price: 19800000,
+    status: "available",
+    mileage: "4,900 km",
+    transmission: "Automatic",
+    fuel_type: "Petrol",
+    body_type: "Sportback",
+    description: "Stunning RS7 Sportback loaded with features.",
+    location: "Nairobi",
+    is_featured: false,
+    image_urls: [rs7],
+    created_at: "2025-11-17T10:00:00.000Z",
+    updated_at: now
+  },
+  {
+    id: "6",
+    title: "Range Rover Autobiography",
+    make: "Land Rover",
+    model: "Range Rover",
+    slug: slugify("Range Rover Autobiography"),
+    year: 2024,
+    price: 26500000,
+    offer_price: 0,
+    status: "available",
+    mileage: "640 km",
+    transmission: "Automatic",
+    fuel_type: "Diesel",
+    body_type: "SUV",
+    description: "Sleek and luxurious Range Rover Autobiography.",
+    location: "Nairobi",
+    is_featured: false,
+    image_urls: [rover],
+    created_at: "2026-02-20T10:00:00.000Z",
+    updated_at: now
+  }
+];
