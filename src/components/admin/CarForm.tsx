@@ -83,10 +83,13 @@ export function CarForm({ mode, initial }: CarFormProps) {
 
     try {
       if (!navigator.onLine) {
-        // Offline now supports multi-image upload queue
-        const compressedDataUrls = await Promise.all(
-          newFiles.map(async (file) => fileToDataUrl(await compressImage(file)))
-        );
+        // Offline now supports multi-image upload queue sequentially to avoid mobile crashes
+        const compressedDataUrls: string[] = [];
+        for (const file of newFiles) {
+          const compressed = await compressImage(file);
+          const dataUrl = await fileToDataUrl(compressed);
+          compressedDataUrls.push(dataUrl);
+        }
         enqueue({
           mode: mode === "create" ? "create" : "update",
           target_id: initial?.id,
@@ -98,8 +101,12 @@ export function CarForm({ mode, initial }: CarFormProps) {
         return;
       }
 
-      // Combine existing string URLs with new compressed File objects
-      const compressedNewFiles = await Promise.all(newFiles.map((file) => compressImage(file)));
+      // Compress new files sequentially to prevent memory exhaustion on mobile browsers
+      const compressedNewFiles: Blob[] = [];
+      for (const file of newFiles) {
+        const compressed = await compressImage(file);
+        compressedNewFiles.push(compressed);
+      }
       const combinedImages: (string | Blob)[] = [...existingUrls, ...compressedNewFiles];
 
       if (mode === "create") {
@@ -303,14 +310,17 @@ export function CarForm({ mode, initial }: CarFormProps) {
           <input
             className="border-slate-200 bg-white text-slate-800 file:mr-3 file:rounded-md file:border-0 file:bg-[#4f6ff0] file:px-3 file:py-1.5 file:text-sm file:font-semibold file:text-white"
             type="file"
-            accept="image/*"
+            accept="image/jpeg, image/png, image/webp, image/gif, image/heic, image/heif"
             multiple
             onChange={(e) => {
               if (e.target.files) {
                 setNewFiles(prev => [...prev, ...Array.from(e.target.files!)]);
               }
-              // Reset input so selecting the same file again triggers onChange
-              e.target.value = '';
+              // Reset input in a timeout to prevent Safari clearing the FileList references prematurely
+              const target = e.target;
+              setTimeout(() => {
+                target.value = '';
+              }, 0);
             }}
           />
         </label>

@@ -14,34 +14,47 @@ export async function compressImage(
   const maxWidth = options?.maxWidth ?? 1600;
   const quality = options?.quality ?? 0.78;
 
-  const bitmap = await createImageBitmap(file);
-  const ratio = bitmap.width > maxWidth ? maxWidth / bitmap.width : 1;
-  const width = Math.round(bitmap.width * ratio);
-  const height = Math.round(bitmap.height * ratio);
-
-  const canvas = document.createElement("canvas");
-  canvas.width = width;
-  canvas.height = height;
-
-  const ctx = canvas.getContext("2d");
-  if (!ctx) {
-    throw new Error("Canvas is not available");
-  }
-
-  ctx.drawImage(bitmap, 0, 0, width, height);
-
   return new Promise((resolve, reject) => {
-    canvas.toBlob(
-      (blob) => {
-        if (!blob) {
-          reject(new Error("Failed to compress image"));
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        const ratio = img.width > maxWidth ? maxWidth / img.width : 1;
+        const width = Math.round(img.width * ratio);
+        const height = Math.round(img.height * ratio);
+
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          reject(new Error("Canvas context is not available"));
           return;
         }
-        resolve(blob);
-      },
-      "image/jpeg",
-      quality
-    );
+
+        ctx.drawImage(img, 0, 0, width, height);
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) {
+              reject(new Error("Failed to compress image"));
+              return;
+            }
+            resolve(blob);
+          },
+          "image/jpeg",
+          quality
+        );
+      };
+      img.onerror = () => {
+        reject(new Error("Failed to load image for compression"));
+      };
+      img.src = event.target?.result as string;
+    };
+    reader.onerror = () => {
+      reject(new Error("Failed to read file"));
+    };
+    reader.readAsDataURL(file);
   });
 }
 

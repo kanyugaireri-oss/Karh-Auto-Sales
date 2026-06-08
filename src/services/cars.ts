@@ -34,28 +34,25 @@ async function uploadImage(
 async function uploadMultipleImages(
   files: (Blob | File | string)[]
 ): Promise<string[]> {
-  const uploadPromises = files.map(async (item) => {
-    // If it's already a full http/https URL from an existing database entry, keep it untouched
+  const results: string[] = [];
+  for (const item of files) {
     if (typeof item === 'string') {
       if (item.startsWith('http')) {
-        return item;
+        results.push(item);
+      } else if (item.startsWith('data:')) {
+        const url = await uploadImage(null, item);
+        if (url) {
+          results.push(url);
+        }
       }
-      if (item.startsWith('data:')) {
-        return await uploadImage(null, item);
+    } else if (item && typeof item === 'object') {
+      const url = await uploadImage(item as Blob);
+      if (url) {
+        results.push(url);
       }
-      return "";
     }
-    
-    // If it's a raw File or Blob (we checked type string above, so here it's an object)
-    if (item && typeof item === 'object') {
-      return await uploadImage(item as Blob);
-    }
-    
-    return "";
-  });
-
-  const results = await Promise.all(uploadPromises);
-  return results.filter(url => url !== ""); // Remove any failed empty strings
+  }
+  return results;
 }
 
 export async function listCars(): Promise<Car[]> {
